@@ -30,7 +30,7 @@ class DOMCollector:
         try:
             response = requests.post(self.url, self.payload)
         except Exception as e:
-            print e.message
+            print(e)
             return None
         doc = response.text
         try:
@@ -62,7 +62,7 @@ class DOMCollector:
             else:
                 return None
         except Exception as e:
-            print e.message
+            print(e)
             return None
         return content
 
@@ -90,6 +90,6 @@ class DOMCollector:
         try:
             response = requests.post(self.url, self.payload)
         except Exception as e:
-            print e.message
+            print(e)
             return None
         return response.text

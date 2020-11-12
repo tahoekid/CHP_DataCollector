@@ -176,11 +176,11 @@ class CHPLogger:
 
     def store_events(self, dispatch, data_dict):
 
-        print "Processing {}".format(dispatch)
+        print("Processing {}".format(dispatch))
         # no current incident data
         if data_dict is None:
             return
-        conn = pymysql.connect(host='192.168.100.142', port=3306, user='mimosa', passwd='mimosa',
+        conn = pymysql.connect(host='localhost', port=3306, user='javaworx', passwd='pwd',
                                db='chplog_db',
                                autocommit=True)
         cur = conn.cursor()
@@ -241,7 +241,7 @@ class CHPLogger:
                         try:
                             cur.execute(sql)
                         except Exception as e:
-                            print e.message
+                            print(e)
                             continue
                         result = 0
                         for row in cur:
@@ -294,10 +294,10 @@ class CHPLogger:
                         #print sql
                         cur.execute(sql)
                     except Exception as e:
-                        print e.message
+                        print(e)
                         continue
             except Exception as e:
-                print e.message
+                print(e)
 
         cur.close()
         conn.close()
@@ -350,7 +350,7 @@ def main():
         try:
             chp_logger.extractData()
         except Exception as e:
-            print e.message
+            print(e)
         print("Start Delay")
         if chp_logger.isNightTime():
             time.sleep(800)  # wait 15 minutes

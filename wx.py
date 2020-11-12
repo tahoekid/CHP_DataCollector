@@ -186,9 +186,9 @@ class Weather:
         return doc
 
     def update_stations(self):
-        print "updating weather station data"
+        print("updating weather station data")
         for station in self.CityDict.values():
-            print "getting {} weather data".format(station)
+            print( "getting {} weather data".format(station))
             doc = self.get_station(station)
             if doc is None:
                 continue
