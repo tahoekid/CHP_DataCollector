@@ -197,9 +197,9 @@ class Weather:
             cnt = len(temperature_section)
             if cnt == 2:
                 target = str(temperature_section[1])
-                temp = target[33:]
-                z = temp.find("F<") - 2
-                temp = temp[:z]
+                divd = target.find("d\">")+3
+                divi = target.find("</div")-2
+                temp = target[divd:divi]
                 self.currentConditions[station]["Temperature"] = temp
             conditions_section = bs.find_all('div', attrs={'class': 'BNeawe tAd8D AP7Wnd'})
             if len(conditions_section) > 1:

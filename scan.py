@@ -1,4 +1,3 @@
-
 from datetime import datetime
 import time
 import pymysql
@@ -14,6 +13,8 @@ class CHPLogger:
 
         self.debug = False
         self.weather = weather
+        self.host = "192.168.1.10"
+        self.password = "fraggle"
         self.dispatchCenters = [
             'GGCC',  # Golden Gate
             'BFCC',  # Bakersfield
@@ -155,7 +156,7 @@ class CHPLogger:
             return
         new_details = []
         for index in range(250):
-            st = "[{}]".format(index+1)
+            st = "[{}]".format(index + 1)
             found = False
             for line in new_text:
                 if line.find(st) >= 0:
@@ -180,7 +181,7 @@ class CHPLogger:
         # no current incident data
         if data_dict is None:
             return
-        conn = pymysql.connect(host='localhost', port=3306, user='javaworx', passwd='pwd',
+        conn = pymysql.connect(host=self.host, port=3306, user='javaworx', passwd=self.password,
                                db='chplog_db',
                                autocommit=True)
         cur = conn.cursor()
@@ -233,12 +234,14 @@ class CHPLogger:
                         #
                         iid2, idoy = self.buildIncidentIdentifier(incidentID, yesterday=True)
                         siid2 = str(iid2)
-                        loc2 = re.escape(loctext.encode('utf-8'))
-
+                        print(loctext)
+                        #loc2 = re.escape(loctext.encode('utf-8'))
+                        loc2 = loctext
                         sql = "SELECT COUNT(*) FROM {} WHERE dispatchcenter = '{}' and CHPIncidentID='{}' and location = '{}'".format(
                             CHPLogger.INCIDENT_TABLE,
                             callCenter, siid2, loc2)
                         try:
+                            print(sql)
                             cur.execute(sql)
                         except Exception as e:
                             print(e)
@@ -271,12 +274,13 @@ class CHPLogger:
                             CHPLogger.INCIDENT_TABLE)
 
                         values = "({},'{}',NOW(),NOW(),'{}','{}','{}','{}','{}',{});".format(currentTemp, conditions,
-                                                                                          callCenter,
-                                                                                          iid, itype, loc2, area,
-                                                                                          details)
+                                                                                             callCenter,
+                                                                                             iid, itype, loc2, area,
+                                                                                             details)
                         sql = sqla + values
                     else:
-                        sql = "SELECT DetailText from {} where dispatchcenter = '{}' and CHPIncidentID = '{}' limit 1".format(CHPLogger.INCIDENT_TABLE, callCenter, iid)
+                        sql = "SELECT DetailText from {} where dispatchcenter = '{}' and CHPIncidentID = '{}' limit 1".format(
+                            CHPLogger.INCIDENT_TABLE, callCenter, iid)
                         cur.execute(sql)
                         prev_details = ""
                         for row in cur:
@@ -291,7 +295,7 @@ class CHPLogger:
                             CHPLogger.INCIDENT_TABLE,
                             new_details, itype, callCenter, iid)
                     try:
-                        #print sql
+                        # print sql
                         cur.execute(sql)
                     except Exception as e:
                         print(e)
@@ -305,7 +309,7 @@ class CHPLogger:
     # fixup orphaned end time where incident p
     #
     def fixupTime(self):
-        conn = pymysql.connect(host='192.168.100.142', port=3306, user='mimosa', passwd='mimosa', db='chplog_db',
+        conn = pymysql.connect(host=self.host, port=3306, user='javaworx', passwd=self.password, db='chplog_db',
                                autocommit=True)
         cur = conn.cursor()
         sql = "UPDATE {} set endtime = NOW() where startime = endtime".format(CHPLogger.INCIDENT_TABLE)
